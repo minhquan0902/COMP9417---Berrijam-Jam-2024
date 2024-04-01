@@ -6,7 +6,7 @@ Part of subject: COMP9417 - Machine Learning and Data Mining
 
 Members:
 
-1. Ho Nam Vu: z5382102
+1. Hoang Nam Vu: z5382102
 2. Duc Huy Nguyen: z5511376
 3. Quoc Dat Bui: z5404752
 4. Quoc Minh Quan Nguyen: z5415466
