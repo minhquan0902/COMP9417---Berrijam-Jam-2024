@@ -11,6 +11,12 @@ Members:
 3. Quoc Dat Bui: z5404752
 4. Quoc Minh Quan Nguyen: z5415466
 
+## Release Note 1.0: Changes to the data/ directory
+
+Since we are dealing with more data expansion for the sake of enhancing the training process, the amount of data inside data/ directory is becoming huge and crumble-some. We decided to ignore it with git and migrate all our latest data into this Google Drive Link:https://drive.google.com/drive/folders/1f_YgKGLr1DpoEpQCdx11aIbwFWnSL40p?usp=sharing.
+
+When working with our repo. Please replace all data content inside data/ with the content share in the Drive link above.
+
 ## Berrijam Jam 2024 Submission Template
 
 The example code and structure is provided as a guide to get you started. Replace the functions and code with your own
