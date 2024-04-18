@@ -77,7 +77,7 @@ def main(predict_data_image_dir: str,
         image_filenames = load_predict_image_names(image_list_file)
         predict_images = [tf.keras.utils.load_img((os.path.join(predict_data_image_dir, image)), target_size=(224, 224)) for image in image_filenames]
         features = extract_features(predict_images, resnet_model)
-        model = tf.keras.models.load_model(os.path.join(trained_model_dir,case_type ))
+        model = tf.keras.models.load_model(os.path.join(trained_model_dir, target_column_name))
         # Iterate through the image list to generate predictions
         predictions = model.predict(features)
         predictions = ['Yes' if pred == 1 else 'No' for pred in predictions]
