@@ -2,7 +2,7 @@ from typing import Any
 
 import pandas as pd
 from PIL import Image
-
+import os
 
 ########################################################################################################################
 # Data Loading functions
@@ -18,7 +18,7 @@ def load_image_labels(labels_file_path: str):
     return df
 
 
-def load_predict_image_names(predict_image_list_file: str) -> [str]:
+def load_predict_image_names(predict_image_list_file: str):
     """
     Reads a text file with one image file name per line and returns a list of files
     :param predict_image_list_file: text file containing the image names
@@ -104,6 +104,7 @@ def save_model(model: Any, target: str, output_dir: str):
     :param target: the target value - can be useful to name the model file for the target it is intended for
     :param output_dir: the output directory to same one or more model files.
     """
+    model.save(os.path.join(output_dir, target))
     # TODO: implement your model saving code here
     raise RuntimeError("save_model() is not implemented.")
 
