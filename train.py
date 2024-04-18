@@ -24,7 +24,6 @@ def parse_args():
     parser.add_argument('-l', '--train_data_labels_csv', required=True, help='Path to labels CSV')
     parser.add_argument('-t', '--target_column_name', required=True, help='Name of the column with target label in CSV')
     parser.add_argument('-o', '--trained_model_output_dir', required=True, help='Output directory for trained model')
-    parser.add_argument('-c', '--case', required=True, choices=['Is Epic', 'Needs Respray', 'Is GenAI'], help='Specify the case for the model training and prediction')
     args = parser.parse_args()
     return args
 
@@ -72,7 +71,7 @@ def train(images , labels, output_dir: str, case_type: str, resources) -> Any:
         return logistic_model
 
 
-def main(train_input_dir: str, train_labels_file_name: str, target_column_name: str, train_output_dir: str, case_type: str):
+def main(train_input_dir: str, train_labels_file_name: str, target_column_name: str, train_output_dir: str):
     """
     The main body of the train.py responsible for
      1. loading resources
@@ -89,9 +88,9 @@ def main(train_input_dir: str, train_labels_file_name: str, target_column_name: 
     :param case_type: the case for the model training and prediction
     """
 
-    if case_type == 'Is Epic':
+    if target_column_name == 'Is Epic':
         # load pre-trained models or resources at this stage.
-        resources = load_train_resources(case_type)
+        resources = load_train_resources(target_column_name)
 
         labels_file_path  = os.path.join(train_input_dir, train_labels_file_name)
         df_labels = pd.read_csv(labels_file_path)
@@ -100,7 +99,7 @@ def main(train_input_dir: str, train_labels_file_name: str, target_column_name: 
         train_labels = [1 if row[target_column_name] == 'Yes' else 0 for index, row in df_labels.iterrows()]
 
         os.makedirs(train_output_dir, exist_ok=True)
-        model = train(train_images, train_labels, train_output_dir, case_type, resources)
+        model = train(train_images, train_labels, train_output_dir, target_column_name, resources)
         save_model(model, target_column_name, train_output_dir)
 
 def extract_features(images, model):
@@ -126,8 +125,7 @@ if __name__ == '__main__':
     train_data_labels_csv = args.train_data_labels_csv
     target_column_name = args.target_column_name
     trained_model_output_dir = args.trained_model_output_dir
-    case_type = args.case
 
-    main(train_data_image_dir, train_data_labels_csv, target_column_name, trained_model_output_dir, case_type)
+    main(train_data_image_dir, train_data_labels_csv, target_column_name, trained_model_output_dir)
 
 ########################################################################################################################

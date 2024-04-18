@@ -7,7 +7,7 @@ import pandas as pd
 from PIL import Image
 from train import load_train_resources, extract_features
 from common import load_model, load_predict_image_names, load_single_image
-
+import joblib
 
 ########################################################################################################################
 
@@ -26,7 +26,6 @@ def parse_args():
     parser.add_argument('-m', '--trained_model_dir', required=True,
                         help='Path to directory containing the model to use to generate predictions')
     parser.add_argument('-o', '--predicts_output_csv', required=True, help='Path to CSV where to write the predictions')
-    parser.add_argument('-c', '--case', required=True, choices=['Is Epic', 'Needs Respray', 'Is GenAI'], help='Specify the case for the model training and prediction')
     args = parser.parse_args()
     return args
 
@@ -51,8 +50,7 @@ def main(predict_data_image_dir: str,
          predict_image_list: str,
          target_column_name: str,
          trained_model_dir: str,
-         predicts_output_csv: str,
-         case_type: str):
+         predicts_output_csv: str):
     """
     The main body of the predict.py responsible for:
      1. load model
@@ -68,16 +66,16 @@ def main(predict_data_image_dir: str,
     :param trained_model_dir: Path to the directory containing the model to use for predictions.
     :param predicts_output_csv: Path to the CSV file that will contain all predictions.
     """
-    if case_type == "Is Epic" :
+    if target_column_name == "Is Epic" :
         # load pre-trained models or resources at this stage.
-        resnet_model = load_train_resources(case_type).get('resnet50_model')
+        resnet_model = load_train_resources(target_column_name).get('resnet50_model')
 
         # Load in the image list
         image_list_file = os.path.join(predict_data_image_dir, predict_image_list)
         image_filenames = load_predict_image_names(image_list_file)
         predict_images = [tf.keras.utils.load_img((os.path.join(predict_data_image_dir, image)), target_size=(224, 224)) for image in image_filenames]
         features = extract_features(predict_images, resnet_model)
-        model = tf.keras.models.load_model(os.path.join(trained_model_dir, target_column_name))
+        model = joblib.load(os.path.join(trained_model_dir, target_column_name))
         # Iterate through the image list to generate predictions
         predictions = model.predict(features)
         predictions = ['Yes' if pred == 1 else 'No' for pred in predictions]
@@ -100,7 +98,6 @@ if __name__ == '__main__':
     target_column_name = args.target_column_name
     trained_model_dir = args.trained_model_dir
     predicts_output_csv = args.predicts_output_csv
-    case_type = args.case
-    main(predict_data_image_dir, predict_image_list, target_column_name, trained_model_dir, predicts_output_csv, case_type)
+    main(predict_data_image_dir, predict_image_list, target_column_name, trained_model_dir, predicts_output_csv)
 
 ########################################################################################################################

@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 from PIL import Image
 import os
-
+import joblib
 ########################################################################################################################
 # Data Loading functions
 ########################################################################################################################
@@ -104,7 +104,16 @@ def save_model(model: Any, target: str, output_dir: str):
     :param target: the target value - can be useful to name the model file for the target it is intended for
     :param output_dir: the output directory to same one or more model files.
     """
-    model.save(os.path.join(output_dir, target))
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Define the full path to save the model
+    model_path = os.path.join(output_dir, f"{target}.joblib")
+
+    # Save the model using joblib
+    joblib.dump(model, model_path)
+    print(f"Model saved successfully at {model_path}")
+
     # TODO: implement your model saving code here
     raise RuntimeError("save_model() is not implemented.")
 
