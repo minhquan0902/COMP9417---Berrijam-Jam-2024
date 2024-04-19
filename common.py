@@ -4,9 +4,39 @@ import pandas as pd
 from PIL import Image
 import os
 import joblib
+import cv2
+import numpy as np
+import random
+from skimage.transform import rotate
+
+
+########################################################################################################################
+# Data augmentation function
+########################################################################################################################
+
+
+def preprocess_image_no_blur_function(image):
+    preprocess_image = np.array(image)
+    preprocess_image = cv2.resize(preprocess_image, (224, 224))
+    preprocess_image = cv2.cvtColor(
+        preprocess_image, cv2.COLOR_BGR2RGB)  # Convert to RGB
+
+    # Randomly decide whether to rotate the image
+    if random.random() < 0.1:  # 1/10 chance
+        # Randomly choose an angle from [90, 180, 270]
+        angle = random.choice([90, 180, 270])
+        preprocess_image = rotate(
+            preprocess_image, angle, preserve_range=True).astype(np.uint8)
+    elif 0.1 < random.random() < 0.2:
+        preprocess_image = cv2.flip(preprocess_image, 1)
+
+    return preprocess_image
+
 ########################################################################################################################
 # Data Loading functions
 ########################################################################################################################
+
+
 def load_image_labels(labels_file_path: str):
     """
     Loads the labels from CSV file.
@@ -73,6 +103,7 @@ def load_single_image(image_file_path: str) -> Image:
 # Model Loading and Saving Functions
 ########################################################################################################################
 
+
 def save_model(model: Any, target: str, output_dir: str):
     """
     Given a model and target label, save the model file in the output_directory.
@@ -113,9 +144,6 @@ def save_model(model: Any, target: str, output_dir: str):
     # Save the model using joblib
     joblib.dump(model, model_path)
     print(f"Model saved successfully at {model_path}")
-
-    # TODO: implement your model saving code here
-    raise RuntimeError("save_model() is not implemented.")
 
 
 def load_model(trained_model_dir: str, target_column_name: str) -> Any:
